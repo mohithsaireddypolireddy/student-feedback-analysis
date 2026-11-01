@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Pulse — Student Feedback{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script defer src="{{ url_for('static', filename='js/app.js') }}"></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <nav class="navbar">
+    <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">✦</span><span>pulse<span class="brand-dot">.</span><small>STUDENT INSIGHTS</small></span></a>
+    <div class="nav-links">
+      <a class="{{ 'active' if request.endpoint == 'index' else '' }}" href="{{ url_for('index') }}">Dashboard</a>
+      <a class="{{ 'active' if request.endpoint == 'feedback_form' else '' }}" href="{{ url_for('feedback_form') }}">Give feedback</a>
+      <a class="{{ 'active' if request.endpoint == 'reports' else '' }}" href="{{ url_for('reports') }}">Reports</a>
+    </div>
+    <a class="nav-cta" href="{{ url_for('feedback_form') }}">Share feedback <span>↗</span></a>
+  </nav>
+  <main class="page-shell">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}<button type="button" class="flash-close" aria-label="Dismiss">×</button></div>{% endfor %}</div>{% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+    <footer><div class="footer-brand"><span class="brand-mark">✦</span> pulse.</div><span>Thoughtful feedback. Better learning. <span class="footer-heart">♥</span></span><span>Local demo · Anonymous by design</span></footer>
+  </main>
+</body>
+</html>

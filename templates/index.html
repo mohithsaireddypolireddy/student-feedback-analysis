@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Pulse{% endblock %}
+{% block content %}
+<section class="hero reveal">
+  <div class="hero-copy"><div class="eyebrow"><span class="live-dot"></span> YOUR LEARNING, IN FOCUS</div>
+    <h1>Every voice helps<br>us <span class="gradient-text">grow better.</span></h1>
+    <p>A clearer picture of student experience. Explore course ratings, discover patterns, and turn feedback into better learning.</p>
+    <div class="hero-actions"><a class="btn btn-primary" href="{{ url_for('feedback_form') }}">✦ Share your feedback <span>→</span></a><a class="text-link" href="{{ url_for('reports') }}">Explore reports <span>↗</span></a></div>
+    <div class="trust-note"><span class="avatar-stack"><i>✦</i><i>◉</i><i>↗</i></span><span><b>Anonymous by default</b><small>No student names or IDs collected</small></span></div>
+  </div>
+  <div class="hero-art">
+    <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+    <div class="art-card art-main"><div class="art-top"><span>LEARNING PULSE</span><span class="art-icon">✦</span></div><div class="art-score">{{ "%.2f"|format(stats.avg_rating) if stats.avg_rating else "—" }}<small>/ 5</small></div><div class="stars">★★★★★</div><div class="art-caption">Overall average rating</div><div class="mini-bars"><i style="height:34%"></i><i style="height:52%"></i><i style="height:44%"></i><i style="height:72%"></i><i style="height:88%"></i><i style="height:65%"></i><i style="height:100%"></i><i style="height:79%"></i><i style="height:91%"></i><i style="height:70%"></i><i style="height:96%"></i><i style="height:82%"></i></div></div>
+    <div class="float-note float-note-top"><span class="float-icon mint">↗</span><span><b>{{ stats.responses }}</b><small>Ratings received</small></span></div>
+    <div class="float-note float-note-bottom"><span class="float-icon peach">✧</span><span><b>Every rating matters</b><small>Small steps, real insight</small></span></div>
+    <div class="sparkle sparkle-one">✦</div><div class="sparkle sparkle-two">✧</div>
+  </div>
+</section>
+<section class="stat-grid reveal">
+  <article class="stat-card stat-purple"><div class="stat-head"><span>Total ratings</span><span class="stat-icon">▤</span></div><div class="stat-number" data-count="{{ stats.responses }}">{{ stats.responses }}</div><div class="stat-foot"><span class="stat-dot"></span> Across all feedback questions</div></article>
+  <article class="stat-card stat-mint"><div class="stat-head"><span>Average satisfaction</span><span class="stat-icon">✧</span></div><div class="stat-number">{{ "%.2f"|format(stats.avg_rating) if stats.avg_rating else "—" }}<small>/5</small></div><div class="stat-foot"><span class="stat-dot"></span> Mean of submitted ratings</div></article>
+  <article class="stat-card stat-peach"><div class="stat-head"><span>Courses tracked</span><span class="stat-icon">⌘</span></div><div class="stat-number">{{ courses|length }}</div><div class="stat-foot"><span class="stat-dot"></span> Ready for your feedback</div></article>
+</section>
+<section class="section-heading reveal"><div><div class="eyebrow">THE BIG PICTURE</div><h2>Feedback at a glance<span class="heading-dot">.</span></h2><p>Quick signals to understand the learning experience.</p></div><a class="subtle-link" href="{{ url_for('reports') }}">View detailed reports <span>→</span></a></section>
+<section class="insights-grid reveal">
+  <article class="panel chart-panel"><div class="panel-heading"><div><h3>Course comparison</h3><p>Average rating for each course</p></div><span class="panel-chip">OUT OF 5</span></div><div class="chart-wrap"><img src="{{ url_for('course_chart') }}" alt="Bar chart comparing average ratings by course"></div><div class="chart-legend"><span><i class="legend-dot purple"></i> Average rating</span><span>Higher is better, not a final verdict</span></div></article>
+  <article class="panel chart-panel"><div class="panel-heading"><div><h3>Rating distribution</h3><p>How ratings are spread</p></div><span class="panel-chip">1–5 SCALE</span></div><div class="chart-wrap"><img src="{{ url_for('distribution_chart') }}" alt="Bar chart showing counts of one to five star ratings"></div><div class="distribution-key">{% for i in range(1,6) %}<span><i class="rating-dot r{{ i }}"></i>{{ i }} star</span>{% endfor %}</div></article>
+</section>
+<section class="section-heading reveal"><div><div class="eyebrow">COURSE SNAPSHOT</div><h2>Courses in focus<span class="heading-dot">.</span></h2><p>Use the numbers as a starting point for thoughtful conversations.</p></div><a class="subtle-link" href="{{ url_for('feedback_form') }}">Rate a course <span>→</span></a></section>
+<section class="course-grid reveal">
+{% for c in summary %}
+<article class="course-card">
+  <div class="course-card-top"><span class="course-symbol symbol-{{ loop.index }}">{{ ["✦","⌘","◈","✧"][loop.index0 % 4] }}</span><span class="course-status"><i></i> Active</span></div>
+  <h3>{{ c.course_name }}</h3><p class="faculty">{{ c.faculty_name }}</p>
+  <div class="course-metrics"><div><strong>{{ "%.2f"|format(c.avg_rating) if c.avg_rating else "—" }}</strong><small>Average rating</small></div><div><strong>{{ c.response_count }}</strong><small>Ratings logged</small></div></div>
+  <div class="rating-track"><span style="width:{{ (c.avg_rating / 5 * 100) if c.avg_rating else 0 }}%"></span></div>
+  <a class="course-link" href="{{ url_for('feedback_form') }}">Give feedback <span>↗</span></a>
+</article>
+{% endfor %}
+</section>
+<section class="cta-banner reveal"><div class="cta-spark">✦</div><div><div class="eyebrow light-eyebrow">YOUR VOICE HAS VALUE</div><h2>Help shape a better<br>classroom experience.</h2><p>It takes about a minute. Your name is never requested.</p></div><a class="btn btn-white" href="{{ url_for('feedback_form') }}">Leave feedback <span>→</span></a><div class="cta-orb"></div></section>
+<section class="demo-strip reveal"><div><b>Just exploring?</b><span>Fill the dashboard with clearly synthetic sample ratings to preview the reports.</span></div><form method="post" action="{{ url_for('demo_data') }}"><button class="btn btn-outline" type="submit">＋ Add demo data</button></form><form method="post" action="{{ url_for('clear_data') }}" onsubmit="return confirm('Clear all local feedback data? This cannot be undone.');"><button class="btn btn-quiet" type="submit">Clear feedback data</button></form></section>
+{% endblock %}

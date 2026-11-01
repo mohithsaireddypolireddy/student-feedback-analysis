@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Give feedback — Pulse{% endblock %}
+{% block content %}
+<section class="form-hero reveal"><div class="eyebrow"><span class="live-dot"></span> YOUR VOICE MATTERS</div><h1>Let's make learning<br><span class="gradient-text">even better.</span></h1><p>Your honest feedback helps us understand what's working and where we can improve.</p><div class="privacy-pill"><span>◈</span> Anonymous · No names or student IDs</div></section>
+<section class="feedback-layout reveal">
+  <aside class="form-aside"><div class="aside-icon">✦</div><h3>A little feedback<br>goes a long way.</h3><p>Choose a course, rate each statement, and you're done. There's no right or wrong answer—just your experience.</p><div class="scale-guide"><b>Your rating scale</b>{% for n, label in [(5,"Excellent"),(4,"Good"),(3,"Okay"),(2,"Needs work"),(1,"Poor")] %}<div><span class="scale-number s{{ n }}">{{ n }}</span><span>{{ label }}</span></div>{% endfor %}</div><div class="aside-foot">✧ &nbsp; Your feedback is shown only as aggregated statistics.</div></aside>
+  <form class="feedback-form panel" method="post" action="{{ url_for('feedback_form') }}" id="feedbackForm">
+    <div class="form-progress"><span id="progressText">0 of {{ questions|length }} answered</span><div class="progress-track"><span id="progressBar"></span></div></div>
+    <div class="field-group"><label for="course_id">Which course are you reviewing?</label><div class="select-wrap"><select id="course_id" name="course_id" required><option value="">Choose a course</option>{% for c in courses %}<option value="{{ c.course_id }}">{{ c.course_name }}</option>{% endfor %}</select><span>⌄</span></div></div>
+    <div class="question-list">{% for q in questions %}<fieldset class="rating-question"><legend><span class="question-index">{{ "%02d"|format(loop.index) }}</span>{{ q.question_text }}</legend><div class="rating-options" role="radiogroup" aria-label="{{ q.question_text }}">{% for n in range(1,6) %}<label class="rating-option"><input type="radio" name="q_{{ q.question_id }}" value="{{ n }}" required><span class="rating-choice"><b>{{ n }}</b><small>{{ ["Poor","Fair","Okay","Good","Great"][n-1] }}</small></span></label>{% endfor %}</div></fieldset>{% endfor %}</div>
+    <div class="field-group comment-field"><label for="comment">Anything else? <span>Optional</span></label><textarea id="comment" name="comment" maxlength="500" rows="3" placeholder="Share a general suggestion (please don't include names or identifying details)…"></textarea><div class="field-hint"><span>Keep it kind and constructive.</span><span id="charCount">0 / 500</span></div></div>
+    <button class="btn btn-primary btn-submit" type="submit">Submit anonymous feedback <span>→</span></button><p class="form-disclaimer">By submitting, you agree to share numeric ratings for aggregated course reports. Optional comments are not displayed publicly.</p>
+  </form>
+</section>
+{% endblock %}
